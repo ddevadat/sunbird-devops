@@ -96,26 +96,26 @@
           debug:
             msg: "Created a new subnet {{ result }}"
 
-        - name: line insert for vlan id
-          lineinfile:
-            state: present
-            path: /root/ansible/variables.yaml
-            regexp: '^[# ]*{{ item.search }}\s*:\s*'
-            line: "{{ item.replace }}"
-            #line:  "vlan_id: {{  ansible_facts['vlan_id'] }}"
-            #insertafter: EOF
-          with_items:
-            - {
-                search: "vlan_id",
-                replace: "vlan_id: {{ ansible_facts['vlan_id'] }}",
-              }
-            - { search: "vcn_id", replace: "vcn_id: {{ vcn_id }}" }
-            - {
-                search: "network_security_group_id",
-                replace: "network_security_group_id: {{ network_security_group_id }}",
-              }
-            - { search: "ig_id", replace: "ig_id: {{ ig_id }}" }
-            - { search: "rt_id", replace: "rt_id: {{ rt_id }}" }
+        # - name: line insert for vlan id
+        #   lineinfile:
+        #     state: present
+        #     path: /root/ansible/variables.yaml
+        #     regexp: '^[# ]*{{ item.search }}\s*:\s*'
+        #     line: "{{ item.replace }}"
+        #     #line:  "vlan_id: {{  ansible_facts['vlan_id'] }}"
+        #     #insertafter: EOF
+        #   with_items:
+        #     - {
+        #         search: "vlan_id",
+        #         replace: "vlan_id: {{ ansible_facts['vlan_id'] }}",
+        #       }
+        #     - { search: "vcn_id", replace: "vcn_id: {{ vcn_id }}" }
+        #     - {
+        #         search: "network_security_group_id",
+        #         replace: "network_security_group_id: {{ network_security_group_id }}",
+        #       }
+        #     - { search: "ig_id", replace: "ig_id: {{ ig_id }}" }
+        #     - { search: "rt_id", replace: "rt_id: {{ rt_id }}" }
 
       rescue:
         - name: Delete the vlan
