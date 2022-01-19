@@ -1,0 +1,4 @@
+### compartment details ###
+version: "3.9"
+parent_compartment_id: "ocid1.compartment.oc1..aaaaaaaan33daf27lmb6mj2el36zhyfsq3cnswjqltqi44muzd6ldxbrlcva"
+compartment_name: "sunbird-installation-test-{{ version }}"

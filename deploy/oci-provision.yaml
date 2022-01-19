@@ -6,7 +6,7 @@
   connection: local
   gather_facts: false
   vars_files:
-    - variables.yaml
+    - oci-variables.yaml
   tasks:
     - name: Create compartment
       oci_identity_compartment:
