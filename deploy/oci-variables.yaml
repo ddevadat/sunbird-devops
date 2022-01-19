@@ -1,6 +1,6 @@
 ### compartment details ###
 version: "3.9"
-parent_compartment_id: "ocid1.compartment.oc1..aaaaaaaan33daf27lmb6mj2el36zhyfsq3cnswjqltqi44muzd6ldxbrlcva"
+parent_compartment_id: "XXXXXX"
 compartment_name: "sunbird-installation-test-{{ version }}"
 
 ## Compute and Network
@@ -30,9 +30,9 @@ vm_names:
   - yarn
   - db
   - others
-SSH_AUTHORIZED_KEYS: "/home/deepak_dev/ssh-keys/.ssh/id_rsa.pub"
+SSH_AUTHORIZED_KEYS: "XXXXXX"
 ### Canonical-Ubuntu-18.04-2021.11.30-0
-image_id: "ocid1.image.oc1.ap-sydney-1.aaaaaaaaz5plf7nskzlywwlzijvmvi2hlr6dajgfgvxfdfh7zsrndwmfzwjq"
+image_id: "XXXXXX"
 instance_shape: "VM.Standard.E3.Flex"
 ocpu: 4
 memory_in_gbs: 32
@@ -43,9 +43,24 @@ dns_label_subnet: "sb"
 TCP_protocol: "6"
 SSH_port: "22"
 cluster_name: sunbird_oke_cluster
-pods_cidr: 192.168.0.0/16
-services_cidr: 10.233.0.0/16
+pods_cidr: XXXXXX
+services_cidr: XXXXXXX
 # node_pool vars
-image_id_oke: ocid1.image.oc1.ap-sydney-1.aaaaaaaaz5plf7nskzlywwlzijvmvi2hlr6dajgfgvxfdfh7zsrndwmfzwjq
+image_id_oke: XXXXXXXXX
 node_pool_name: sunbird_nodepool
 kubeconfig_path: /home/deepak_dev/kubeconfig
+
+
+### Object storage bucket names ( Azure containers)
+private_containers:
+  - private
+  - artifacts
+  - management
+  - results
+  - backups
+  - label
+public_containers:
+  - contents
+  - public
+
+## Object Storage

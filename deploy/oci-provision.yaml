@@ -197,7 +197,7 @@
   hosts: localhost
   connection: local
   vars_files:
-    - variables.yaml
+    - oci-variables.yaml
   vars:
     node_pool_config_details:
       size: 4
