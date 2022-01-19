@@ -21,3 +21,19 @@ network_security_group_name: "sunbird-nsg"
 route_table_rules:
   - cidr_block: "{{ quad_zero_route }}"
     network_entity_id: "{{ ig_id }}"
+
+##### Compute
+vm_names:
+  - jenkins
+  - kp
+  - dp
+  - yarn
+  - db
+  - others
+SSH_AUTHORIZED_KEYS: "/home/deepak_dev/ssh-keys/.ssh/id_rsa.pub"
+### Canonical-Ubuntu-18.04-2021.09.22-0
+image_id: "ocid1.image.oc1.ap-mumbai-1.aaaaaaaajtelsa6ufuqoodhkqc6xwwi2wts7bkaladvmwhvjve6ibo6pbava"
+instance_shape: "VM.Standard.E3.Flex"
+ocpu: 4
+memory_in_gbs: 32
+dns_label_subnet: "sb"

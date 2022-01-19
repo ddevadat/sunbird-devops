@@ -144,3 +144,48 @@
             state: absent
         - fail:
             msg: "{{ ansible_failed_result }}"
+
+    - block:
+        - set_fact:
+            authorized_key: "{{ lookup('file', SSH_AUTHORIZED_KEYS) }}"
+        - name: Launch an instance
+          oci_compute_instance:
+            availability_domain: "{{ availability_domain }}"
+            compartment_id: "{{ compartment_id }}"
+            name: "{{ item }}"
+            image_id: "{{ image_id }}"
+            shape: "{{ instance_shape }}"
+            source_details:
+              boot_volume_size_in_gbs: 350
+              image_id: "{{ image_id }}"
+              source_type: "image"
+            shape_config:
+              ocpus: "{{ ocpu }}"
+              memory_in_gbs: "{{ memory_in_gbs }}"
+
+            create_vnic_details:
+              assign_public_ip: True
+              hostname_label: "{{ item }}"
+              subnet_id: "{{ vlan_id }}"
+            metadata:
+              ssh_authorized_keys: "{{ authorized_key }}"
+          with_items: "{{ vm_names }}"
+
+          register: result
+
+        #############################################
+        - name: ensure file does not exist
+          file:
+            state: absent
+            path: non_oke_instance.txt
+
+        - name: Print instance details
+          # debug:
+          #   msg: "Launched a new instance {{ item.instance.id }}"
+          lineinfile:
+            state: present
+            create: yes
+            insertbefore: EOF
+            dest: non_oke_instance.txt
+            line: "{{ item.instance.id }}"
+          loop: "{{ result.results }}"
