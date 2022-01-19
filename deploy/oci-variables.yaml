@@ -31,8 +31,8 @@ vm_names:
   - db
   - others
 SSH_AUTHORIZED_KEYS: "/home/deepak_dev/ssh-keys/.ssh/id_rsa.pub"
-### Canonical-Ubuntu-18.04-2021.09.22-0
-image_id: "ocid1.image.oc1.ap-mumbai-1.aaaaaaaajtelsa6ufuqoodhkqc6xwwi2wts7bkaladvmwhvjve6ibo6pbava"
+### Canonical-Ubuntu-18.04-2021.11.30-0
+image_id: "ocid1.image.oc1.ap-sydney-1.aaaaaaaaz5plf7nskzlywwlzijvmvi2hlr6dajgfgvxfdfh7zsrndwmfzwjq"
 instance_shape: "VM.Standard.E3.Flex"
 ocpu: 4
 memory_in_gbs: 32
