@@ -7,6 +7,7 @@ compartment_name: "sunbird-installation-test-{{ version }}"
 vcn_name: "diksha_vcn"
 vcn_cidr_block: "10.0.0.0/16"
 vcn_dns_label: "sunbird"
+dns_label_subnet: "sb"
 vlan_cidr_block: "10.0.1.0/24"
 display_name: "sunbird-vm-subnet"
 ig_name: sunbird_igw ## Interne GW name
