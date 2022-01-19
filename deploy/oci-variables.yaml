@@ -37,3 +37,15 @@ instance_shape: "VM.Standard.E3.Flex"
 ocpu: 4
 memory_in_gbs: 32
 dns_label_subnet: "sb"
+
+
+##### OKE
+TCP_protocol: "6"
+SSH_port: "22"
+cluster_name: sunbird_oke_cluster
+pods_cidr: 192.168.0.0/16
+services_cidr: 10.233.0.0/16
+# node_pool vars
+image_id_oke: ocid1.image.oc1.ap-sydney-1.aaaaaaaaz5plf7nskzlywwlzijvmvi2hlr6dajgfgvxfdfh7zsrndwmfzwjq
+node_pool_name: sunbird_nodepool
+kubeconfig_path: /home/deepak_dev/kubeconfig
