@@ -5,53 +5,20 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  vars:
-    # ##############################################################
-    # MANDATORY TO CHANGE
-    # ##############################################################
-    version: "3.9"
-    sp_client_id: ""
-    sp_client_secret: ""
-    ssh_public_key_file_location: /home/rajesh_r/deployer.pub
-    ############### Maxmind licence key ###########################
-    # To create license key
-    # Goto: https://www.maxmind.com/en/accounts/current/license-key
-    # Click: Generate a new license key.
-    # ##############################################################
-    geoip_licence_key: ""
-    # ##############################################################
-    # OPTIONAL
-    # ##############################################################
-    compartment_name: "sunbird-installation-test-{{ version }}"
-    parent_compartment_id: "ocid1.compartment.oc1..aaaaaaaan33daf27lmb6mj2el36zhyfsq3cnswjqltqi44muzd6ldxbrlcva"
-    location: centralindia
-    vnet_name: "installation-test-{{ version }}"
-    subnet_name: "installation-test-subnet-{{ version }}"
-    storage_account_name: "sbinstallation{{ version | regex_replace('\\.|-', '') }}"
-    vm_names:
-      - jenkins
-      - kp
-      - dp
-      - yarn
-      - db
-      - others
-    vm_size: Standard_D4s_v4
-    # To get correct verions, run
-    # az aks get-versions -l centralindia -o table
-    aks_version: 1.20.7
-    private_containers:
-      - private
-      - artifacts
-      - management
-      - results
-      - backups
-      - label
-    public_containers:
-      - contents
-      - public
+  vars_files:
+    - variables.yaml
   tasks:
     - name: Create compartment
       oci_identity_compartment:
         parent_compartment_id: "{{ parent_compartment_id }}"
         name: "{{compartment_name}}"
         description: "SunBird Compartment"
+      register: compartment_result
+
+    - set_fact:
+        compartment_id: "{{ compartment_result.compartment.id }}"
+
+    - name: Show comp id
+      debug:
+        msg: |
+          Return value is {{ compartment_id }}
