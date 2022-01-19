@@ -2,3 +2,21 @@
 version: "3.9"
 parent_compartment_id: "ocid1.compartment.oc1..aaaaaaaan33daf27lmb6mj2el36zhyfsq3cnswjqltqi44muzd6ldxbrlcva"
 compartment_name: "sunbird-installation-test-{{ version }}"
+
+## Compute and Network
+vcn_name: "diksha_vcn"
+vcn_cidr_block: "10.0.0.0/16"
+vcn_dns_label: "sunbird"
+vlan_cidr_block: "10.0.1.0/24"
+display_name: "sunbird-vm-subnet"
+ig_name: sunbird_igw ## Interne GW name
+
+# common networking definitions
+quad_zero_route: "0.0.0.0/0"
+route_table_name: "sunbird-subnet-route-table"
+network_security_group_name: "sunbird-nsg"
+
+# route all internet access to our Internet Gateway
+route_table_rules:
+  - cidr_block: "{{ quad_zero_route }}"
+    network_entity_id: "{{ ig_id }}"

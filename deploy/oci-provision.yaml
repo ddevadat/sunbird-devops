@@ -18,7 +18,129 @@
     - set_fact:
         compartment_id: "{{ compartment_result.compartment.id }}"
 
-    - name: Show comp id
-      debug:
-        msg: |
-          Return value is {{ compartment_id }}
+    - name: Create a VCN
+      oci_network_vcn:
+        compartment_id: "{{ compartment_id }}"
+        display_name: "{{ vcn_name }}"
+        cidr_block: "{{ vcn_cidr_block }}"
+        dns_label: "{{ vcn_dns_label }}"
+      register: result
+    - set_fact:
+        vcn_id: "{{ result.vcn.id }}"
+        vcn: "{{ result.vcn }}"
+        cacheable: yes
+
+    # ===========================================================================================
+    - name: Get availability domains for vlans
+      oci_identity_availability_domain_facts:
+        compartment_id: "{{compartment_id}}"
+      register: oci_ads
+    - set_fact:
+        availability_domain: "{{oci_ads.availability_domains[0].name}}"
+    # ===========================================================================================
+    - name: Create a new Internet Gateway
+      oci_network_internet_gateway:
+        compartment_id: "{{ compartment_id }}"
+        vcn_id: "{{ vcn_id }}"
+        name: "{{ ig_name }}"
+        is_enabled: "yes"
+        state: "present"
+      register: result
+    - set_fact:
+        ig_id: "{{ result.internet_gateway.id }}"
+
+    - name: Create route table to connect internet gateway to the VCN
+      oci_network_route_table:
+        compartment_id: "{{ compartment_id }}"
+        vcn_id: "{{ vcn_id }}"
+        name: "{{ route_table_name }}"
+        route_rules: "{{ route_table_rules }}"
+        state: "present"
+      register: result
+    - set_fact:
+        rt_id: "{{ result.route_table.id }}"
+    # ===========================================================================================
+    - name: Create network_security_group
+      oci_network_security_group:
+        compartment_id: "{{ compartment_id }}"
+        display_name: "{{ network_security_group_name }}"
+        vcn_id: "{{ vcn_id }}"
+      register: result
+
+    - set_fact:
+        network_security_group_id: "{{result.network_security_group.id}}"
+
+    - block:
+        - name: Create a Subnet
+          oci_network_subnet:
+            availability_domain: "{{ availability_domain }}"
+            cidr_block: "{{ vlan_cidr_block }}"
+            compartment_id: "{{ compartment_id }}"
+            display_name: "{{ display_name }}"
+            route_table_id: "{{ rt_id }}"
+            dns_label: "{{ dns_label_subnet }}"
+            # nsg_ids:
+            # - "{{ network_security_group_id }}"
+            vcn_id: "{{ vcn_id }}"
+          register: result
+          tags:
+            - always
+            - network
+            - k8s
+            - info
+        - set_fact:
+            vlan_id: "{{ result.subnet.id }}"
+            cacheable: yes
+
+        - name: Print subnet details
+          debug:
+            msg: "Created a new subnet {{ result }}"
+
+        - name: line insert for vlan id
+          lineinfile:
+            state: present
+            path: /root/ansible/variables.yaml
+            regexp: '^[# ]*{{ item.search }}\s*:\s*'
+            line: "{{ item.replace }}"
+            #line:  "vlan_id: {{  ansible_facts['vlan_id'] }}"
+            #insertafter: EOF
+          with_items:
+            - {
+                search: "vlan_id",
+                replace: "vlan_id: {{ ansible_facts['vlan_id'] }}",
+              }
+            - { search: "vcn_id", replace: "vcn_id: {{ vcn_id }}" }
+            - {
+                search: "network_security_group_id",
+                replace: "network_security_group_id: {{ network_security_group_id }}",
+              }
+            - { search: "ig_id", replace: "ig_id: {{ ig_id }}" }
+            - { search: "rt_id", replace: "rt_id: {{ rt_id }}" }
+
+      rescue:
+        - name: Delete the vlan
+          oci_network_vlan:
+            id: "{{ vlan_id }}"
+            state: absent
+
+        - name: Delete network_security_group
+          oci_network_security_group:
+            network_security_group_id: "{{ network_security_group_id }}"
+            state: absent
+
+        - name: Delete the route table
+          oci_network_route_table:
+            id: "{{ rt_id }}"
+            state: absent
+
+        - name: Delete the Internet Gateway
+          oci_network_internet_gateway:
+            id: "{{ ig_id }}"
+            state: absent
+
+        - name: Delete the VCN
+          oci_network_vcn:
+            vcn_id: "{{ vcn_id }}"
+            state: absent
+        - fail:
+            msg: "{{ ansible_failed_result }}"
